@@ -6,59 +6,75 @@ import org.openqa.selenium.WebDriver;
 
 public class LoginPage extends BasePage {
 
-    WebDriver driver;
+    private WebDriver driver;
 
     public LoginPage(WebDriver driver) {
-
         super(driver);
-
         this.driver = driver;
     }
 
-    By makeAppointmentBtn =
+    private By makeAppointmentBtn =
             By.id("btn-make-appointment");
 
-    By username =
+    private By usernameField =
             By.id("txt-username");
 
-    By password =
+    private By passwordField =
             By.id("txt-password");
 
-    By loginBtn =
+    private By loginBtn =
             By.id("btn-login");
 
-    By errorMessage =
+    private By errorMessage =
             By.xpath("//p[@class='lead text-danger']");
 
-    By menuToggle =
+    private By menuToggle =
             By.id("menu-toggle");
 
-    By logoutBtn =
+    private By logoutBtn =
             By.linkText("Logout");
 
+    /**
+     * Navigate to Login Page
+     */
     public void clickMakeAppointment() {
-
         click(makeAppointmentBtn);
     }
 
-    public void login(String user, String pass) {
+    /**
+     * Complete Login Flow
+     */
+    public void login(String username,
+                      String password) {
 
-        type(username, user);
+        clickMakeAppointment();
 
-        type(password, pass);
+        type(usernameField, username);
+
+        type(passwordField, password);
 
         click(loginBtn);
     }
 
+    /**
+     * Invalid Login Error
+     */
     public String getErrorMessage() {
-
         return getText(errorMessage);
     }
 
+    /**
+     * Verify Login Success
+     */
     public boolean isLoginSuccessful() {
-        return driver.getCurrentUrl().contains("#appointment");
+
+        return driver.getCurrentUrl()
+                .contains("#appointment");
     }
 
+    /**
+     * Logout
+     */
     public void logout() {
 
         click(menuToggle);
@@ -66,10 +82,12 @@ public class LoginPage extends BasePage {
         click(logoutBtn);
     }
 
+    /**
+     * Verify Login Page Displayed
+     */
     public boolean isLoginPageDisplayed() {
 
-        return driver.findElement(
-                By.id("btn-login")
-        ).isDisplayed();
+        return waitForElement(loginBtn)
+                .isDisplayed();
     }
 }
