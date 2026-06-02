@@ -6,12 +6,11 @@ import org.openqa.selenium.WebDriver;
 
 public class LoginPage extends BasePage {
 
-    private WebDriver driver;
-
     public LoginPage(WebDriver driver) {
         super(driver);
-        this.driver = driver;
     }
+
+    // Locators
 
     private By makeAppointmentBtn =
             By.id("btn-make-appointment");
@@ -28,66 +27,69 @@ public class LoginPage extends BasePage {
     private By errorMessage =
             By.xpath("//p[@class='lead text-danger']");
 
-    private By menuToggle =
-            By.id("menu-toggle");
+    // Actions
 
-    private By logoutBtn =
-            By.linkText("Logout");
-
-    /**
-     * Navigate to Login Page
-     */
     public void clickMakeAppointment() {
         click(makeAppointmentBtn);
     }
 
-    /**
-     * Complete Login Flow
-     */
-    public void login(String username,
-                      String password) {
+    public void enterUsername(String username) {
+        type(usernameField, username);
+    }
+
+    public void enterPassword(String password) {
+        type(passwordField, password);
+    }
+
+    public void clickLogin() {
+        click(loginBtn);
+    }
+
+    // Login Method
+
+    public void login(String username, String password) {
 
         clickMakeAppointment();
 
-        type(usernameField, username);
+        enterUsername(username);
 
-        type(passwordField, password);
+        enterPassword(password);
+
+        clickLogin();
+    }
+
+    // Verify Successful Login
+
+    public boolean isLoginSuccessful() {
+
+        return driver.getCurrentUrl().contains("#appointment");
+    }
+
+    // Error Message
+
+    public String getErrorMessage() {
+
+        return getText(errorMessage);
+    }
+
+    // MODULE 5 METHODS
+
+    public void clickLoginOnly() {
+
+        clickMakeAppointment();
 
         click(loginBtn);
     }
 
-    /**
-     * Invalid Login Error
-     */
-    public String getErrorMessage() {
-        return getText(errorMessage);
+    public String getUsernameValidationMessage() {
+
+        return waitForElement(usernameField)
+                .getAttribute("validationMessage");
     }
 
-    /**
-     * Verify Login Success
-     */
-    public boolean isLoginSuccessful() {
+    public String getPasswordValidationMessage() {
 
-        return driver.getCurrentUrl()
-                .contains("#appointment");
-    }
-
-    /**
-     * Logout
-     */
-    public void logout() {
-
-        click(menuToggle);
-
-        click(logoutBtn);
-    }
-
-    /**
-     * Verify Login Page Displayed
-     */
-    public boolean isLoginPageDisplayed() {
-
-        return waitForElement(loginBtn)
-                .isDisplayed();
+        return waitForElement(passwordField)
+                .getAttribute("validationMessage");
     }
 }

@@ -13,7 +13,8 @@
         <classes>
 
             <class name="tests.LoginTest"/>
-
+            <class name="tests.MultipleAppointmentsTest"/>
+            <class name="tests.FormValidationTest"/>
         </classes>
 
     </test>
