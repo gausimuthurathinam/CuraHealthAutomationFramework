@@ -19,8 +19,11 @@ public class LoginTest extends BaseTest {
         return ExcelUtils.getExcelData(path, "Sheet1");
     }
 
-    @Test
-    public void verifyValidLogin() {
+    @Test(dataProvider = "loginData")
+    public void verifyLogin(
+            String username,
+            String password,
+            String expectedResult) {
 
         LoginPage loginPage =
                 new LoginPage(driver);
@@ -28,35 +31,25 @@ public class LoginTest extends BaseTest {
         loginPage.clickMakeAppointment();
 
         loginPage.login(
-                ConfigReader.getProperty("username"),
-                ConfigReader.getProperty("password")
-        );
-        System.out.println(driver.getCurrentUrl());
-        Assert.assertTrue(
-                loginPage.isLoginSuccessful(),
-                "Login failed - user not redirected to appointment page"
-        );
-    }
-
-    @Test
-    public void verifyInvalidLogin() {
-
-        LoginPage loginPage =
-                new LoginPage(driver);
-
-        loginPage.clickMakeAppointment();
-
-        loginPage.login(
-                "wrongUser",
-                "wrongPass"
+                username,
+                password
         );
 
-        String actual =
-                loginPage.getErrorMessage();
-
-        Assert.assertTrue(
-                actual.contains("Login failed")
-        );
+        if(expectedResult.equalsIgnoreCase("Valid"))
+        {
+            Assert.assertTrue(
+                    loginPage.isLoginSuccessful(),
+                    "Valid login failed"
+            );
+        }
+        else if(expectedResult.equalsIgnoreCase("Invalid"))
+        {
+            Assert.assertTrue(
+                    loginPage.getErrorMessage()
+                            .contains("Login failed"),
+                    "Invalid login error message not displayed"
+            );
+        }
     }
 
     @Test
@@ -68,8 +61,8 @@ public class LoginTest extends BaseTest {
         loginPage.clickMakeAppointment();
 
         loginPage.login(
-                ConfigReader.getProperty("username"),
-                ConfigReader.getProperty("password")
+                "John Doe",
+                "ThisIsNotAPassword"
         );
 
         loginPage.logout();

@@ -2,6 +2,7 @@ package base;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.ConfigReader;
@@ -21,6 +22,10 @@ public class BasePage {
                         Integer.parseInt(
                                 ConfigReader.getProperty("timeout")
                         )));
+    }
+    public WebElement waitForElement(By locator)
+    {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
     public void click(By locator) {
