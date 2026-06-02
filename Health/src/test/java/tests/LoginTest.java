@@ -13,14 +13,26 @@ import java.io.IOException;
 public class LoginTest extends BaseTest {
 
     @DataProvider(name = "loginData")
-    public Object[][] getExcelData() throws IOException
-    {
+    public Object[][] getExcelData() throws IOException {
+
         String path = "src/test/resources/LoginData.xlsx";
-        return ExcelUtils.getExcelData(path, "Sheet1");
+
+        return ExcelUtils.getExcelData(
+                path,
+                "Sheet1"
+        );
     }
 
-    @Test
-    public void verifyValidLogin() {
+    // TEST CASE 1
+    @Test(
+            priority = 1,
+            dataProvider = "loginData"
+    )
+    public void verifyLogin(
+            String username,
+            String password,
+            String expectedResult
+    ) {
 
         LoginPage loginPage =
                 new LoginPage(driver);
@@ -28,38 +40,29 @@ public class LoginTest extends BaseTest {
         loginPage.clickMakeAppointment();
 
         loginPage.login(
-                ConfigReader.getProperty("username"),
-                ConfigReader.getProperty("password")
+                username,
+                password
         );
-        System.out.println(driver.getCurrentUrl());
-        Assert.assertTrue(
-                loginPage.isLoginSuccessful(),
-                "Login failed - user not redirected to appointment page"
-        );
+
+        if(expectedResult.equalsIgnoreCase("Valid"))
+        {
+            Assert.assertTrue(
+                    loginPage.isLoginSuccessful(),
+                    "Valid login failed"
+            );
+        }
+        else if(expectedResult.equalsIgnoreCase("Invalid"))
+        {
+            Assert.assertTrue(
+                    loginPage.getErrorMessage()
+                            .contains("Login failed"),
+                    "Invalid login error message not displayed"
+            );
+        }
     }
 
-    @Test
-    public void verifyInvalidLogin() {
-
-        LoginPage loginPage =
-                new LoginPage(driver);
-
-        loginPage.clickMakeAppointment();
-
-        loginPage.login(
-                "wrongUser",
-                "wrongPass"
-        );
-
-        String actual =
-                loginPage.getErrorMessage();
-
-        Assert.assertTrue(
-                actual.contains("Login failed")
-        );
-    }
-
-    @Test
+    // TEST CASE 2
+    @Test(priority = 2, retryAnalyzer = utils.RetryAnalyzer.class)
     public void verifyLogout() {
 
         LoginPage loginPage =
@@ -68,8 +71,8 @@ public class LoginTest extends BaseTest {
         loginPage.clickMakeAppointment();
 
         loginPage.login(
-                ConfigReader.getProperty("username"),
-                ConfigReader.getProperty("password")
+                "John Doe",
+                "ThisIsNotAPassword"
         );
 
         loginPage.logout();
@@ -84,7 +87,8 @@ public class LoginTest extends BaseTest {
         );
     }
 
-    @Test(retryAnalyzer = utils.RetryAnalyzer.class)
+    // TEST CASE 3
+    @Test(priority = 3)
     public void verifyProtectedPageRedirect() {
 
         driver.get(
@@ -100,4 +104,5 @@ public class LoginTest extends BaseTest {
 
         Assert.assertTrue(status);
     }
+
 }

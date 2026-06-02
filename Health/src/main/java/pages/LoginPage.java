@@ -6,58 +6,85 @@ import org.openqa.selenium.WebDriver;
 
 public class LoginPage extends BasePage {
 
-    WebDriver driver;
-
     public LoginPage(WebDriver driver) {
-
         super(driver);
-
-        this.driver = driver;
     }
 
-    By makeAppointmentBtn =
+    // Locators
+
+    private final By makeAppointmentBtn =
             By.id("btn-make-appointment");
 
-    By username =
+    private final By usernameField =
             By.id("txt-username");
 
-    By password =
+    private final By passwordField =
             By.id("txt-password");
 
-    By loginBtn =
+    private final By loginBtn =
             By.id("btn-login");
 
-    By errorMessage =
+    private final By errorMessage =
             By.xpath("//p[@class='lead text-danger']");
 
-    By menuToggle =
-            By.id("menu-toggle");
-
-    By logoutBtn =
-            By.linkText("Logout");
+    // Actions
 
     public void clickMakeAppointment() {
-
         click(makeAppointmentBtn);
     }
 
-    public void login(String user, String pass) {
+    public void enterUsername(String username) {
+        type(usernameField, username);
+    }
 
-        type(username, user);
+    public void enterPassword(String password) {
+        type(passwordField, password);
+    }
 
-        type(password, pass);
-
+    public void clickLogin() {
         click(loginBtn);
     }
+
+    // Login Method
+
+    public void login(String username, String password) {
+
+        clickMakeAppointment();
+
+        enterUsername(username);
+
+        enterPassword(password);
+
+        clickLogin();
+    }
+
+    // Verify Successful Login
+
+    public boolean isLoginSuccessful() {
+
+        return driver.getCurrentUrl().contains("#appointment");
+    }
+
+    // Error Message
 
     public String getErrorMessage() {
 
         return getText(errorMessage);
     }
 
-    public boolean isLoginSuccessful() {
-        return driver.getCurrentUrl().contains("#appointment");
-    }
+    // MODULE 5 METHODS
+
+///public void clickLoginOnly() {clickMakeAppointment();click(loginBtn);}
+
+///   public String getUsernameValidationMessage() {return waitForElement(usernameField).getAttribute("validationMessage");}
+
+//    public String getPasswordValidationMessage() {return waitForElement(passwordField).getAttribute("validationMessage");}
+
+    By menuToggle =
+            By.id("menu-toggle");
+
+    By logoutBtn =
+            By.linkText("Logout");
 
     public void logout() {
 
@@ -68,8 +95,7 @@ public class LoginPage extends BasePage {
 
     public boolean isLoginPageDisplayed() {
 
-        return driver.findElement(
-                By.id("btn-login")
-        ).isDisplayed();
+        return isDisplayed(loginBtn);
     }
+
 }
