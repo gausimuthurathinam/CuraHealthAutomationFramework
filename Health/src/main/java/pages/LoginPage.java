@@ -12,19 +12,19 @@ public class LoginPage extends BasePage {
 
     // Locators
 
-    private By makeAppointmentBtn =
+    private final By makeAppointmentBtn =
             By.id("btn-make-appointment");
 
-    private By usernameField =
+    private final By usernameField =
             By.id("txt-username");
 
-    private By passwordField =
+    private final By passwordField =
             By.id("txt-password");
 
-    private By loginBtn =
+    private final By loginBtn =
             By.id("btn-login");
 
-    private By errorMessage =
+    private final By errorMessage =
             By.xpath("//p[@class='lead text-danger']");
 
     // Actions
@@ -74,22 +74,28 @@ public class LoginPage extends BasePage {
 
     // MODULE 5 METHODS
 
-    public void clickLoginOnly() {
+///public void clickLoginOnly() {clickMakeAppointment();click(loginBtn);}
 
-        clickMakeAppointment();
+///   public String getUsernameValidationMessage() {return waitForElement(usernameField).getAttribute("validationMessage");}
 
-        click(loginBtn);
+//    public String getPasswordValidationMessage() {return waitForElement(passwordField).getAttribute("validationMessage");}
+
+    By menuToggle =
+            By.id("menu-toggle");
+
+    By logoutBtn =
+            By.linkText("Logout");
+
+    public void logout() {
+
+        click(menuToggle);
+
+        click(logoutBtn);
     }
 
-    public String getUsernameValidationMessage() {
+    public boolean isLoginPageDisplayed() {
 
-        return waitForElement(usernameField)
-                .getAttribute("validationMessage");
+        return isDisplayed(loginBtn);
     }
 
-    public String getPasswordValidationMessage() {
-
-        return waitForElement(passwordField)
-                .getAttribute("validationMessage");
-    }
 }

@@ -31,7 +31,6 @@ public class MultipleAppointmentsTest extends BaseTest {
                 "First Appointment"
         );
 
-        // OPEN APPOINTMENT PAGE AGAIN
         driver.get(
                 "https://katalon-demo-cura.herokuapp.com/#appointment"
         );
@@ -49,7 +48,13 @@ public class MultipleAppointmentsTest extends BaseTest {
 
         historyPage.openHistoryPage();
 
-        Assert.assertTrue(true);
+        Assert.assertTrue(
+                historyPage.isHistoryDisplayed()
+        );
+
+        Assert.assertFalse(
+                historyPage.getHistoryText().isEmpty()
+        );
     }
 
     @Test(priority = 5)

@@ -2,57 +2,107 @@ package tests;
 
 import base.BaseTest;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.LoginPage;
+import utils.ConfigReader;
+import utils.ExcelUtils;
+
+import java.io.IOException;
 
 public class LoginTest extends BaseTest {
 
-    @Test(priority = 1)
-    public void verifySuccessfulLogin() {
+    @DataProvider(name = "loginData")
+    public Object[][] getExcelData() throws IOException {
 
-        LoginPage loginPage =
-                new LoginPage(driver);
+        String path = "src/test/resources/LoginData.xlsx";
 
-        loginPage.login(
-                "John Doe",
-                "ThisIsNotAPassword"
-        );
-
-        Assert.assertTrue(
-                loginPage.isLoginSuccessful(),
-                "Login failed with valid credentials"
+        return ExcelUtils.getExcelData(
+                path,
+                "Sheet1"
         );
     }
 
-    @Test(priority = 2)
-    public void verifyInvalidLogin() {
-
-        LoginPage loginPage =
-                new LoginPage(driver);
-
-        loginPage.login(
-                "John Doe",
-                "WrongPassword"
-        );
-
-        Assert.assertTrue(
-                loginPage.getErrorMessage()
-                        .contains("Login failed"),
-                "Error message not displayed"
-        );
-    }
-
-    @Test(priority = 3)
-    public void verifyEmptyLoginValidation() {
+    // TEST CASE 1
+    @Test(
+            priority = 1,
+            dataProvider = "loginData"
+    )
+    public void verifyLogin(
+            String username,
+            String password,
+            String expectedResult
+    ) {
 
         LoginPage loginPage =
                 new LoginPage(driver);
 
         loginPage.clickMakeAppointment();
 
-        loginPage.clickLogin();
+        loginPage.login(
+                username,
+                password
+        );
 
-        // PASS TEST DIRECTLY
-        Assert.assertTrue(true);
+        if(expectedResult.equalsIgnoreCase("Valid"))
+        {
+            Assert.assertTrue(
+                    loginPage.isLoginSuccessful(),
+                    "Valid login failed"
+            );
+        }
+        else if(expectedResult.equalsIgnoreCase("Invalid"))
+        {
+            Assert.assertTrue(
+                    loginPage.getErrorMessage()
+                            .contains("Login failed"),
+                    "Invalid login error message not displayed"
+            );
+        }
     }
+
+    // TEST CASE 2
+    @Test(priority = 2, retryAnalyzer = utils.RetryAnalyzer.class)
+    public void verifyLogout() {
+
+        LoginPage loginPage =
+                new LoginPage(driver);
+
+        loginPage.clickMakeAppointment();
+
+        loginPage.login(
+                "John Doe",
+                "ThisIsNotAPassword"
+        );
+
+        loginPage.logout();
+
+        String currentUrl =
+                driver.getCurrentUrl();
+
+        Assert.assertTrue(
+                currentUrl.contains(
+                        ConfigReader.getProperty("baseUrl")
+                )
+        );
+    }
+
+    // TEST CASE 3
+    @Test(priority = 3)
+    public void verifyProtectedPageRedirect() {
+
+        driver.get(
+                ConfigReader.getProperty("baseUrl")
+                        + "/profile.php#appointment"
+        );
+
+        LoginPage loginPage =
+                new LoginPage(driver);
+
+        boolean status =
+                loginPage.isLoginPageDisplayed();
+
+        Assert.assertTrue(status);
+    }
+
 }

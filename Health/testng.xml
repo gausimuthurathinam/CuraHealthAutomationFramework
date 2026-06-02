@@ -13,6 +13,7 @@
         <classes>
 
             <class name="tests.LoginTest"/>
+            <class name="tests.AppointmentTest"/>
             <class name="tests.MultipleAppointmentsTest"/>
             <class name="tests.FormValidationTest"/>
         </classes>

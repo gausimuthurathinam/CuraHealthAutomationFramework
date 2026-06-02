@@ -14,24 +14,30 @@ public class HistoryPage extends BasePage {
         super(driver);
     }
 
-    private By menuToggle =
+    private final By menuToggle =
             By.id("menu-toggle");
 
-    private By historyLink =
+    private final By historyLink =
             By.xpath("//nav//a[@href='history.php#history']");
 
-    private By historyItems =
+    private final By historyItems =
             By.tagName("h2");
+
+
+    private final By historyHeader =
+            By.xpath("//h2");
+
+    public boolean isHistoryDisplayed() {
+
+        return isDisplayed(historyHeader);
+    }
+
 
     public void openHistoryPage() {
 
         // Open sidebar menu
         click(menuToggle);
 
-        try {
-            Thread.sleep(2000);
-        } catch (Exception e) {
-        }
 
         // Click using JavaScript
         JavascriptExecutor js =
@@ -54,4 +60,6 @@ public class HistoryPage extends BasePage {
 
         return history;
     }
+
+
 }

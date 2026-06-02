@@ -11,27 +11,32 @@ public class AppointmentPage extends BasePage {
         super(driver);
     }
 
-    private By facilityDropdown = By.id("combo_facility");
-    private By admissionCheckBox = By.id("chk_hospotal_readmission");
-    private By visitDate = By.id("txt_visit_date");
-    private By commentField = By.id("txt_comment");
-    private By bookAppointmentButton = By.id("btn-book-appointment");
+    private final By facilityDropdown = By.id("combo_facility");
+    private final By admissionCheckBox = By.id("chk_hospotal_readmission");
+    private final By visitDate = By.id("txt_visit_date");
+    private final By commentField = By.id("txt_comment");
+    private final By bookAppointmentButton = By.id("btn-book-appointment");
 
     // Validation locators
-    private By dateRequiredMessage =
-            By.xpath("//*[contains(text(),'required')]");
+//    private final By dateRequiredMessage =By.xpath("//*[contains(text(),'required')]");
 
     public void selectFacility(String facility) {
         Select select = new Select(waitForElement(facilityDropdown));
         select.selectByVisibleText(facility);
     }
 
+
     public void clickAdmissionCheckbox() {
-        click(admissionCheckBox);
+
+        waitForElement(admissionCheckBox).click();
     }
 
     public void enterVisitDate(String date) {
+
         type(visitDate, date);
+
+        // CLOSE DATE PICKER
+        waitForElement(visitDate).sendKeys("\t");
     }
 
     public void enterCommit(String comment) {
@@ -50,12 +55,15 @@ public class AppointmentPage extends BasePage {
 
         selectFacility(facility);
 
-        if (admission) {
-            clickAdmissionCheckbox();
+        if (date != null && !date.isEmpty()) {
+
+            enterVisitDate(date);
         }
 
-        if (date != null && !date.isEmpty()) {
-            enterVisitDate(date);
+        // CLICK CHECKBOX AFTER DATE PICKER CLOSES
+        if (admission) {
+
+            clickAdmissionCheckbox();
         }
 
         enterCommit(comment);
@@ -67,10 +75,6 @@ public class AppointmentPage extends BasePage {
 
     public boolean isStillOnAppointmentPage() {
         return driver.getCurrentUrl().contains("#appointment");
-    }
-
-    public String getCommentText() {
-        return waitForElement(commentField).getAttribute("value");
     }
 
     public boolean isBookAppointmentButtonEnabled() {

@@ -9,9 +9,9 @@ public class ConfirmationPage extends BasePage {
     public ConfirmationPage(WebDriver driver) {
         super(driver);
     }
-    private By facilityText = By.id("facility");
-    private By admissionText = By.id("hospital_readmission");
-    private By visitDateText = By.id("visit_date");
+    private final By facilityText = By.id("facility");
+    private final By admissionText = By.id("hospital_readmission");
+    private final By visitDateText = By.id("visit_date");
     public String getFacility() {
         return getText(facilityText);
     }
