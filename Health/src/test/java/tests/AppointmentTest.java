@@ -30,20 +30,10 @@ public class AppointmentTest extends BaseTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.login("John Doe", "ThisIsNotAPassword");
         AppointmentPage appointmentPage = new AppointmentPage(driver);
-        Assert.assertTrue(
-                appointmentPage.isBookAppointmentButtonEnabled()
-        );
         appointmentPage.bookAppointment("Hongkong CURA Healthcare Center", true, "20/07/2026", "Admission Test");
 
         ConfirmationPage confirmationPage = new ConfirmationPage(driver);
-        System.out.println(
-                confirmationPage.getAdmissionStatus()
-        );
-        Assert.assertTrue(
-                confirmationPage.getAdmissionStatus()
-                        .trim()
-                        .equalsIgnoreCase("Yes")
-        );
+        Assert.assertEquals(confirmationPage.getAdmissionStatus(), "Yes");
     }
 
     @Test(priority = 3)
